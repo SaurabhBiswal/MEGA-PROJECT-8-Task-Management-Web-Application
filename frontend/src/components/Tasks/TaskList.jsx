@@ -56,7 +56,9 @@ const TaskList = () => {
         });
 
         socket.on('task_updated', (updatedTask) => {
-            setTasks(prev => prev.map(t => t._id === updatedTask._id ? updatedTask : t));
+            setTasks(prev => prev.map(t =>
+                (t._id === updatedTask._id || t.id === updatedTask._id) ? updatedTask : t
+            ));
         });
 
         socket.on('task_deleted', (taskId) => {
