@@ -11,24 +11,24 @@ A full-stack task management application built with **React**, **Node.js**, **Ex
 graph TD
     User((User))
     
-    subgraph Frontend [React Frontend (Vercel)]
+    subgraph Frontend ["React Frontend (Vercel)"]
         UI[User Interface]
         Redux[State Management]
         SocketClient[Socket.io Client]
     end
     
-    subgraph Backend [Node/Express Backend (Render)]
+    subgraph Backend ["Node/Express Backend (Render)"]
         API[REST API]
         SocketServer[Socket.io Server]
         Auth[JWT Auth Middleware]
         EmailService[Email Service]
     end
     
-    subgraph Database [Database & Storage]
+    subgraph Database ["Database & Storage"]
         MongoDB[(MongoDB Atlas)]
     end
     
-    subgraph External [External Services]
+    subgraph External ["External Services"]
         Google[Google OAuth & Calendar]
         SendGrid[SendGrid Email API]
     end
