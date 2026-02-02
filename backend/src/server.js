@@ -51,6 +51,7 @@ io.on('connection', (socket) => {
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/tasks', require('./routes/tasks'));
+app.use('/api/google', require('./routes/googleAuth'));
 
 // Health check route
 app.get('/api/health', (req, res) => {
