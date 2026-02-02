@@ -29,6 +29,9 @@ const taskSchema = new mongoose.Schema({
     due_date: {
         type: Date
     },
+    calendarEventId: {
+        type: String // Google Calendar event ID for synced tasks
+    },
     createdAt: {
         type: Date,
         default: Date.now

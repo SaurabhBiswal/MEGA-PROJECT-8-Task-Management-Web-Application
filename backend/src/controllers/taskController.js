@@ -1,6 +1,7 @@
 const Task = require('../models/Task');
 const User = require('../models/User');
 const { sendTaskCreatedEmail, sendTaskStatusChangedEmail, sendTaskPriorityChangedEmail } = require('../services/email');
+const { createCalendarEvent, updateCalendarEvent, deleteCalendarEvent } = require('../services/googleCalendar');
 
 // Get all tasks for the authenticated user
 exports.getAllTasks = async (req, res) => {
@@ -93,11 +94,25 @@ exports.createTask = async (req, res) => {
                     task.title,
                     task.description,
                     task.priority,
-                    task.dueDate
+                    task.due_date
                 );
             }
         } catch (emailError) {
             console.error('Email send failed:', emailError);
+        }
+
+        // Google Calendar Sync
+        try {
+            const user = await User.findById(req.userId).select('+googleAccessToken');
+            if (user && user.calendarSyncEnabled && user.googleAccessToken) {
+                const eventId = await createCalendarEvent(task, user.googleAccessToken);
+                if (eventId) {
+                    task.calendarEventId = eventId;
+                    await task.save();
+                }
+            }
+        } catch (calendarError) {
+            console.error('Google Calendar Sync failed:', calendarError.message);
         }
 
         res.status(201).json({
@@ -182,6 +197,32 @@ exports.updateTask = async (req, res) => {
             message: 'Task updated successfully',
             data: { task }
         });
+
+        // Background Sync (Don't block response)
+        (async () => {
+            // Task events
+            if (oldTask && (oldTask.status !== task.status || oldTask.priority !== task.priority)) {
+                try {
+                    const user = await User.findById(req.userId).select('+googleAccessToken');
+                    if (user) {
+                        // Email Notification
+                        if (oldTask.status !== task.status) {
+                            await sendTaskStatusChangedEmail(user.email, user.name, task.title, oldTask.status, task.status);
+                        }
+                        if (oldTask.priority !== task.priority) {
+                            await sendTaskPriorityChangedEmail(user.email, user.name, task.title, oldTask.priority, task.priority);
+                        }
+
+                        // Google Calendar Sync
+                        if (user.calendarSyncEnabled && user.googleAccessToken && task.calendarEventId) {
+                            await updateCalendarEvent(task.calendarEventId, task, user.googleAccessToken);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Update notification/sync failed:', error);
+                }
+            }
+        })();
     } catch (error) {
         console.error('Update task error:', error);
         res.status(500).json({
@@ -213,6 +254,18 @@ exports.deleteTask = async (req, res) => {
             message: 'Task deleted successfully',
             data: { task }
         });
+
+        // Google Calendar Sync (Delete)
+        if (task.calendarEventId) {
+            try {
+                const user = await User.findById(req.userId).select('+googleAccessToken');
+                if (user && user.googleAccessToken) {
+                    await deleteCalendarEvent(task.calendarEventId, user.googleAccessToken);
+                }
+            } catch (error) {
+                console.error('Google Calendar event deletion failed:', error);
+            }
+        }
     } catch (error) {
         console.error('Delete task error:', error);
         res.status(500).json({
