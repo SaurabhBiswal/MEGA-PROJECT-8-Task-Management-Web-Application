@@ -59,6 +59,12 @@ npm run dev
 - **GET** `/api/auth/:id/avatar` - Retrieve user avatar.
 - **GET** `/api/tasks?limit=10&skip=0` - Paginated task list.
 
+## ⚠️ Known Limitations (Google Calendar)
+The app is currently in **Google OAuth Testing Mode**. 
+- To use the Google Calendar Sync feature, your email address MUST be manually added to the **Test Users** list in the Google Cloud Console.
+- Users not in the test list will face an **"Access Blocked"** error.
+- **Why?** Google requires a strict verification process (4-6 weeks) for apps accessing sensitive scopes like Calendar in production. For this project/demo, we are using Testing Mode.
+
 ## 📂 Project Structure
 
 ```
