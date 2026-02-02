@@ -1,6 +1,48 @@
 # Task Management Web Application (Major Project Edition 🚀)
 
+## 🌐 Live Demo
+- **Frontend (Vercel):** [https://mega-project-8-task-management-web.vercel.app/](https://mega-project-8-task-management-web.vercel.app/)
+- **Backend (Render):** [https://task-manager-backend-aa5y.onrender.com/](https://task-manager-backend-aa5y.onrender.com/)
+
 A full-stack task management application built with **React**, **Node.js**, **Express**, and **MongoDB**. This project has been upgraded to "Major Project" status with real-time capabilities and advanced features.
+
+## 🏗️ System Architecture
+```mermaid
+graph TD
+    User((User))
+    
+    subgraph Frontend [React Frontend (Vercel)]
+        UI[User Interface]
+        Redux[State Management]
+        SocketClient[Socket.io Client]
+    end
+    
+    subgraph Backend [Node/Express Backend (Render)]
+        API[REST API]
+        SocketServer[Socket.io Server]
+        Auth[JWT Auth Middleware]
+        EmailService[Email Service]
+    end
+    
+    subgraph Database [Database & Storage]
+        MongoDB[(MongoDB Atlas)]
+    end
+    
+    subgraph External [External Services]
+        Google[Google OAuth & Calendar]
+        SendGrid[SendGrid Email API]
+    end
+
+    User -->|Interacts| UI
+    UI -->|HTTP Requests| API
+    UI <-->|Real-time Events| SocketServer
+    
+    API -->|Read/Write| MongoDB
+    API -->|Sync| Google
+    EmailService -->|Sends Emails| SendGrid
+    
+    SocketServer -->|Push Updates| UI
+```
 
 ## 🌟 Key Features
 
