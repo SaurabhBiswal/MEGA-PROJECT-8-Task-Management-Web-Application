@@ -1,10 +1,28 @@
 const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
 const sendEmail = async (options) => {
-    // Create transporter
-    // For production, use SendGrid/Mailgun/etc credentials from .env
-    // For dev, we will log to console if no creds, or use a test account
+    // 1. Try SendGrid first
+    if (process.env.SENDGRID_API_KEY) {
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        const msg = {
+            to: options.email,
+            from: process.env.FROM_EMAIL || 'punpunsaurabh2002@gmail.com', // Verified Sender
+            subject: options.subject,
+            text: options.message,
+            html: options.html // Optional: if you pass HTML later
+        };
+        try {
+            await sgMail.send(msg);
+            console.log('✅ Email sent via SendGrid');
+            return;
+        } catch (error) {
+            console.error('❌ SendGrid Failed:', error.response ? error.response.body : error.message);
+            // Fallback to SMTP if SendGrid fails
+        }
+    }
 
+    // 2. Fallback to Nodemailer (SMTP)
     let transporter;
 
     if (process.env.SMTP_HOST) {
@@ -18,7 +36,7 @@ const sendEmail = async (options) => {
         });
     } else {
         // Mock for development - Log only
-        console.log('⚠️ SMTP not configured. Mocking email send.');
+        console.log('⚠️ No Email Provider configured (SendGrid/SMTP). Mocking email send.');
         console.log(`📧 To: ${options.email}`);
         console.log(`📝 Subject: ${options.subject}`);
         console.log(`📄 Message: ${options.message}`);
@@ -33,6 +51,7 @@ const sendEmail = async (options) => {
     };
 
     await transporter.sendMail(message);
+    console.log('✅ Email sent via SMTP');
 };
 
 const sendWelcomeEmail = async (email, name) => {
