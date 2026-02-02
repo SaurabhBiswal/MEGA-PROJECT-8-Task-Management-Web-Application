@@ -73,6 +73,7 @@ const TaskList = () => {
             // fetchTasks(); // Handled by socket now
         } catch (error) {
             console.error('Error creating task:', error);
+            throw error;
         }
     };
 
@@ -84,6 +85,7 @@ const TaskList = () => {
             // fetchTasks(); // Handled by socket
         } catch (error) {
             console.error('Error updating task:', error);
+            throw error;
         }
     };
 
