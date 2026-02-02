@@ -58,4 +58,9 @@ export const uploadAvatar = (formData) => api.post('/auth/me/avatar', formData, 
 
 export const getAvatarUrl = (userId) => `${API_URL}/auth/${userId}/avatar`;
 
+// Google Calendar Sync APIs
+export const getGoogleAuthUrl = () => api.get('/google/auth');
+export const handleGoogleCallback = (code) => api.post('/google/callback', { code });
+export const disconnectGoogleCalendar = () => api.post('/google/disconnect');
+
 export default api;
