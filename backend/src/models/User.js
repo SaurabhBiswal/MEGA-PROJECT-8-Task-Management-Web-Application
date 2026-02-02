@@ -24,6 +24,18 @@ const userSchema = new mongoose.Schema({
     avatar: {
         type: Buffer
     },
+    googleAccessToken: {
+        type: String,
+        select: false // Don't return by default for security
+    },
+    googleRefreshToken: {
+        type: String,
+        select: false
+    },
+    calendarSyncEnabled: {
+        type: Boolean,
+        default: false
+    },
     createdAt: {
         type: Date,
         default: Date.now
