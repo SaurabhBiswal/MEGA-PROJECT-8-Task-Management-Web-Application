@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { Link, useLocation } from 'react-router-dom';
 import { uploadAvatar, getAvatarUrl } from '../../services/api';
+import GoogleCalendarSync from '../GoogleCalendar/GoogleCalendarSync';
 import './Header.css';
 
 const Header = () => {
@@ -73,6 +74,7 @@ const Header = () => {
 
                     {user && (
                         <div className="user-info">
+                            <GoogleCalendarSync />
                             <div
                                 className="avatar-container"
                                 onClick={handleAvatarClick}

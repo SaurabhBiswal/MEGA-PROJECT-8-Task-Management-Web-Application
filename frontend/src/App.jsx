@@ -7,6 +7,7 @@ import Register from './components/Auth/Register';
 import TaskList from './components/Tasks/TaskList';
 import Dashboard from './components/Dashboard/Dashboard';
 import ProtectedRoute from './components/Layout/ProtectedRoute';
+import GoogleCallback from './components/GoogleCalendar/GoogleCallback';
 import { useState, useEffect } from 'react';
 import { getTasks } from './services/api';
 
@@ -67,6 +68,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <DashboardWrapper />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/auth/google/callback"
+                element={
+                  <ProtectedRoute>
+                    <GoogleCallback />
                   </ProtectedRoute>
                 }
               />
