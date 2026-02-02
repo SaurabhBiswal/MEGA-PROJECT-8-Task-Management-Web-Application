@@ -5,6 +5,10 @@ const sendEmail = async (options) => {
     // 1. Try SendGrid first
     if (process.env.SENDGRID_API_KEY) {
         sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        console.log(`📧 DEBUG: Sending email via SendGrid...`);
+        console.log(`📧 DEBUG: FROM_EMAIL: '${process.env.FROM_EMAIL}'`);
+        console.log(`📧 DEBUG: FROM_NAME: '${process.env.FROM_NAME}'`);
+
         const msg = {
             to: options.email,
             from: `${process.env.FROM_NAME || 'Task Manager App'} <${process.env.FROM_EMAIL}>`,
