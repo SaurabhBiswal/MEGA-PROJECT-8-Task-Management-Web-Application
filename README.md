@@ -14,7 +14,8 @@ A full-stack task management application built with **React**, **Node.js**, **Ex
 - **📊 Analytics Dashboard**: Visual charts (Pie/Bar) using **Recharts** to track productivity.
 - **📋 Kanban Board**: Trello-style **Drag & Drop** interface (`@hello-pangea/dnd`) for managing task status.
 - **🖼️ Profile Avatars**: Image upload functionality using **Multer**.
-- **📧 Email Notifications**: Automated welcome emails using **Nodemailer**.
+- **📅 Google Calendar Sync**: Bidirectional task synchronization using **Google OAuth 2.0**.
+- **📧 Email Notifications**: Automated welcome emails and task alerts using **Nodemailer**.
 - **📄 Pagination**: API supports `?limit` and `?skip` for handling large datasets.
 
 ## 🛠️ Tech Stack
