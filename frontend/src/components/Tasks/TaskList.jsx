@@ -80,14 +80,22 @@ const TaskList = () => {
     };
 
     const handleUpdateTask = async (id, taskData) => {
+        // Optimistic Update
+        const originalTasks = [...tasks];
+        const updatedOptimisticTask = { ...editingTask, ...taskData, _id: id };
+
+        setTasks(prev => prev.map(t => (t._id === id ? updatedOptimisticTask : t)));
+        setEditingTask(null);
+        setShowForm(false);
+
         try {
             await updateTask(id, taskData);
-            setEditingTask(null);
-            setShowForm(false);
-            // fetchTasks(); // Handled by socket
+            // Success - Socket will confirm logically, but UI is already updated
         } catch (error) {
             console.error('Error updating task:', error);
-            throw error;
+            // Revert on error
+            setTasks(originalTasks);
+            alert("Failed to update task. Reverting changes.");
         }
     };
 
