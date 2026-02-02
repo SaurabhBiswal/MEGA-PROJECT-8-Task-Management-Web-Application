@@ -1,0 +1,109 @@
+/* Global Theme Variables */
+:root {
+  --primary-color: #6366f1;
+  /* Indigo 500 */
+  --primary-hover: #4f46e5;
+  /* Indigo 600 */
+  --secondary-color: #ec4899;
+  /* Pink 500 */
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+
+  /* Light Theme Defaults */
+  --background-light: #f3f4f6;
+  --text-light: #1f2937;
+  --text-secondary-light: #6b7280;
+  --card-light: #ffffff;
+  --border-light: #e5e7eb;
+
+  /* Aliases for active theme */
+  --bg-color: var(--background-light);
+  --text-primary: var(--text-light);
+  --text-secondary: var(--text-secondary-light);
+  --card-bg: var(--card-light);
+  --border-color: var(--border-light);
+}
+
+[data-theme='dark'] {
+  --primary-color: #818cf8;
+
+  /* Dark Theme Defaults */
+  --background-dark: #0f172a;
+  --text-dark: #f9fafb;
+  --text-secondary-dark: #94a3b8;
+  --card-dark: #1e293b;
+  --border-dark: #334155;
+
+  /* Override Aliases */
+  --bg-color: var(--background-dark);
+  --text-primary: var(--text-dark);
+  --text-secondary: var(--text-secondary-dark);
+  --card-bg: var(--card-dark);
+  --border-color: var(--border-dark);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  borderRadius: 4px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Setup App layout */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Utilities */
+.btn-primary {
+  padding: 8px 16px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  filter: brightness(110%);
+}
