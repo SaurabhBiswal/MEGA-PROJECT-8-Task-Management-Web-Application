@@ -7,7 +7,7 @@ const sendEmail = async (options) => {
         sgMail.setApiKey(process.env.SENDGRID_API_KEY);
         const msg = {
             to: options.email,
-            from: `${process.env.FROM_NAME || 'Task Manager App'} <${process.env.FROM_EMAIL || 'punpunsaurabh2002@gmail.com'}>`,
+            from: `${process.env.FROM_NAME || 'Task Manager App'} <${process.env.FROM_EMAIL}>`,
             subject: options.subject,
             text: options.message,
             html: options.html // Optional: if you pass HTML later
@@ -44,7 +44,7 @@ const sendEmail = async (options) => {
     }
 
     const message = {
-        from: `${process.env.FROM_NAME || 'Task Manager'} <${process.env.FROM_EMAIL || 'noreply@taskmanager.com'}>`,
+        from: `${process.env.FROM_NAME || 'Task Manager App'} <${process.env.FROM_EMAIL}>`,
         to: options.email,
         subject: options.subject,
         text: options.message
