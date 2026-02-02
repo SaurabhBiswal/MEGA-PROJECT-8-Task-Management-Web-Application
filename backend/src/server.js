@@ -6,22 +6,29 @@ const http = require('http');
 const { Server } = require('socket.io');
 const { startDailyReminders } = require('./services/cronJobs');
 
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+// Load environment variables
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+
 // Socket.io setup
 const io = new Server(server, {
     cors: {
-        origin: process.env.FRONTEND_URL || "http://localhost:5173",
-        methods: ["GET", "POST", "PUT", "DELETE"]
+        origin: FRONTEND_URL,
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true
     }
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: FRONTEND_URL,
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
