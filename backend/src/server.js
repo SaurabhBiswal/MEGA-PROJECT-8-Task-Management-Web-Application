@@ -116,6 +116,27 @@ const startServer = async () => {
     }
 };
 
+// CRON Trigger Route (For external services like cron-job.org)
+const { triggerDailyReminders } = require('./services/cronJobs');
+app.get('/api/cron/remind', async (req, res) => {
+    try {
+        // Optional: Add a secret key check here if needed
+        // const authHeader = req.headers['authorization'];
+        // if (authHeader !== process.env.CRON_SECRET) return res.status(401).json({ error: 'Unauthorized' });
+
+        console.log('🔄 Manual Trigger: Starting daily reminders...');
+        const result = await triggerDailyReminders();
+
+        if (result.success) {
+            res.json({ success: true, message: `Reminders sent to ${result.sentCount} users.` });
+        } else {
+            res.status(500).json({ success: false, error: result.error });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 startServer();
 
 module.exports = app;

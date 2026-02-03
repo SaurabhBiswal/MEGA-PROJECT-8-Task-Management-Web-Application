@@ -4,40 +4,47 @@ const User = require('../models/User');
 const { sendDailyReminderEmail } = require('./email');
 
 // Schedule daily reminder at 9 AM
-const startDailyReminders = () => {
-    // Cron expression: '0 9 * * *' = Every day at 9:00 AM
-    cron.schedule('0 9 * * *', async () => {
-        console.log('⏰ Running daily task reminder job...');
+// Logic to send reminders (Refactored for reuse)
+const triggerDailyReminders = async () => {
+    console.log('⏰ Running daily task reminder job...');
+    try {
+        const users = await User.find();
+        let sentCount = 0;
 
-        try {
-            // Get all users
-            const users = await User.find();
+        for (const user of users) {
+            const tasks = await Task.find({
+                user: user._id,
+                status: { $in: ['pending', 'in-progress'] }
+            }).select('title priority dueDate');
 
-            for (const user of users) {
-                // Find pending or in-progress tasks for this user
-                const tasks = await Task.find({
-                    user: user._id,
-                    status: { $in: ['pending', 'in-progress'] }
-                }).select('title priority dueDate');
-
-                // Send email if user has pending tasks
-                if (tasks.length > 0) {
-                    try {
-                        await sendDailyReminderEmail(user.email, user.name, tasks);
-                        console.log(`✅ Reminder sent to ${user.email} (${tasks.length} tasks)`);
-                    } catch (emailError) {
-                        console.error(`❌ Failed to send reminder to ${user.email}:`, emailError.message);
-                    }
+            if (tasks.length > 0) {
+                try {
+                    await sendDailyReminderEmail(user.email, user.name, tasks);
+                    console.log(`✅ Reminder sent to ${user.email} (${tasks.length} tasks)`);
+                    sentCount++;
+                } catch (emailError) {
+                    console.error(`❌ Failed to send reminder to ${user.email}:`, emailError.message);
                 }
             }
-
-            console.log('✅ Daily reminder job completed');
-        } catch (error) {
-            console.error('❌ Daily reminder job failed:', error);
         }
-    });
-
-    console.log('📅 Daily reminder cron job initialized (9 AM daily)');
+        console.log(`✅ Daily reminder job completed. Sent to ${sentCount} users.`);
+        return { success: true, sentCount };
+    } catch (error) {
+        console.error('❌ Daily reminder job failed:', error);
+        return { success: false, error: error.message };
+    }
 };
 
-module.exports = { startDailyReminders };
+// Schedule daily reminder at 9 AM IST
+const startDailyReminders = () => {
+    // Cron expression: '0 9 * * *' = Every day at 9:00 AM
+    // Added timezone: 'Asia/Kolkata' to ensure it runs at Indian time
+    cron.schedule('0 9 * * *', triggerDailyReminders, {
+        scheduled: true,
+        timezone: "Asia/Kolkata"
+    });
+
+    console.log('📅 Daily reminder cron job initialized (9 AM IST)');
+};
+
+module.exports = { startDailyReminders, triggerDailyReminders };
