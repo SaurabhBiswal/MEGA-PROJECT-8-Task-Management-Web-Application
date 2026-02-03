@@ -71,6 +71,24 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/google', require('./routes/googleAuth'));
 
+
+// CRON Trigger Route (For external services like cron-job.org)
+const { triggerDailyReminders } = require('./services/cronJobs');
+app.get('/api/cron/remind', async (req, res) => {
+    try {
+        console.log('🔄 Manual Trigger: Starting daily reminders...');
+        const result = await triggerDailyReminders();
+
+        if (result.success) {
+            res.json({ success: true, message: `Reminders sent to ${result.sentCount} users.` });
+        } else {
+            res.status(500).json({ success: false, error: result.error });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // Health check route
 app.get('/api/health', (req, res) => {
     res.status(200).json({
@@ -116,26 +134,7 @@ const startServer = async () => {
     }
 };
 
-// CRON Trigger Route (For external services like cron-job.org)
-const { triggerDailyReminders } = require('./services/cronJobs');
-app.get('/api/cron/remind', async (req, res) => {
-    try {
-        // Optional: Add a secret key check here if needed
-        // const authHeader = req.headers['authorization'];
-        // if (authHeader !== process.env.CRON_SECRET) return res.status(401).json({ error: 'Unauthorized' });
 
-        console.log('🔄 Manual Trigger: Starting daily reminders...');
-        const result = await triggerDailyReminders();
-
-        if (result.success) {
-            res.json({ success: true, message: `Reminders sent to ${result.sentCount} users.` });
-        } else {
-            res.status(500).json({ success: false, error: result.error });
-        }
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
 
 startServer();
 
