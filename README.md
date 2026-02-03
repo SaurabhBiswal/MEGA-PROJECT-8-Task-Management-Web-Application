@@ -107,6 +107,13 @@ The app is currently in **Google OAuth Testing Mode**.
 - Users not in the test list will face an **"Access Blocked"** error.
 - **Why?** Google requires a strict verification process (4-6 weeks) for apps accessing sensitive scopes like Calendar in production. For this project/demo, we are using Testing Mode.
 
+## ⏰ Daily Reminders (Cron Setup)
+Since free-tier hosting (Render) puts the server to sleep after inactivity, the internal cron job may fail to run at 9 AM.
+**Solution:** Use an external cron service (like [cron-job.org](https://cron-job.org/)) to hit the trigger endpoint:
+*   **Trigger URL:** `https://task-manager-backend-aa5y.onrender.com/api/cron/remind`
+*   **Schedule:** Every day at 9:00 AM (`Asia/Kolkata` Timezone)
+*   **Result:** This wakes up the server and forces the email reminders to be sent.
+
 ## 📂 Project Structure
 
 ```
