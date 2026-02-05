@@ -79,14 +79,14 @@ app.get('/api/cron/remind', async (req, res) => {
         console.log('🔄 Manual Trigger: Starting daily reminders...');
         const result = await triggerDailyReminders();
 
-        // Send minimal response to avoid "data too big" error from cron-job.org
+        // Send 204 No Content - The smallest possible response
         if (result.success) {
-            res.status(200).send('OK');
+            res.status(204).end();
         } else {
-            res.status(500).send('FAIL');
+            res.status(500).send('F');
         }
     } catch (error) {
-        res.status(500).send('ERROR');
+        res.status(500).send('E');
     }
 });
 
