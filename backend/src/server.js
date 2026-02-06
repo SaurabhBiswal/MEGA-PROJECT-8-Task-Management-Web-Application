@@ -74,19 +74,23 @@ app.use('/api/google', require('./routes/googleAuth'));
 
 // CRON Trigger Route (For external services like cron-job.org)
 const { triggerDailyReminders } = require('./services/cronJobs');
-app.get('/api/cron/remind', async (req, res) => {
-    try {
-        console.log('🔄 Manual Trigger: Starting daily reminders...');
-        const result = await triggerDailyReminders();
 
-        // Send 204 No Content - The smallest possible response
-        if (result.success) {
-            res.status(204).end();
-        } else {
-            res.status(500).send('F');
-        }
+// Support both GET and HEAD requests
+app.head('/api/cron/remind', (req, res) => {
+    res.status(204).end();
+});
+
+app.get('/api/cron/remind', async (req, res) => {
+    // Send response immediately to avoid timeout
+    res.status(204).end();
+
+    // Then trigger reminders asynchronously
+    try {
+        console.log('🔄 Cron Trigger: Starting daily reminders...');
+        await triggerDailyReminders();
+        console.log('✅ Cron job completed successfully');
     } catch (error) {
-        res.status(500).send('E');
+        console.error('❌ Cron job failed:', error.message);
     }
 });
 
