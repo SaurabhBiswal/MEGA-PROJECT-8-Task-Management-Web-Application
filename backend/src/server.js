@@ -80,18 +80,23 @@ app.head('/api/cron/remind', (req, res) => {
     res.status(204).end();
 });
 
-app.get('/api/cron/remind', async (req, res) => {
-    // Send response immediately to avoid timeout
-    res.status(204).end();
+app.get('/api/cron/remind', (req, res) => {
+    // Send 200 OK with a tiny body immediately to fulfill the request
+    // This prevents timeouts and "Response data too big" errors
+    res.status(200).send('OK');
 
-    // Then trigger reminders asynchronously
-    try {
-        console.log('🔄 Cron Trigger: Starting daily reminders...');
-        await triggerDailyReminders();
-        console.log('✅ Cron job completed successfully');
-    } catch (error) {
-        console.error('❌ Cron job failed:', error.message);
-    }
+    // Trigger reminders in the background without blocking the response
+    // Using a self-invoking async function or just not awaiting
+    (async () => {
+        try {
+            console.log('🔄 Cron Trigger: Starting reminders in background...');
+            const { triggerDailyReminders } = require('./services/cronJobs');
+            await triggerDailyReminders();
+            console.log('✅ Background cron job completed');
+        } catch (error) {
+            console.error('❌ Background cron error:', error.message);
+        }
+    })();
 });
 
 // Health check route
